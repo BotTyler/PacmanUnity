@@ -15,7 +15,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Tilemap wallMap;
 
     [SerializeField] private Tilemap gateMap;
-    [SerializeField] private Tilemap pointMap;
 
     [SerializeField] private Transform parentGameObjectTransform;
     //public Vector3 location;
@@ -78,10 +77,6 @@ public class PlayerController : MonoBehaviour
 
 
 
-    }
-    private bool checkHorizontal(direction dir)
-    {
-        return dir == direction.RIGHT || dir == direction.LEFT;
     }
 
     private void FixedUpdate()
@@ -174,7 +169,6 @@ public class PlayerController : MonoBehaviour
         Tile rightTileGate = gateMap.GetTile<Tile>(rightLoc);
         Tile leftTileGate = gateMap.GetTile<Tile>(leftLoc);
 
-        print(upTileGate);
 
         // populating the array
         adj[(int)direction.UP] = isCurrentTileAvall(upTile) && isCurrentTileAvall(upTileGate);

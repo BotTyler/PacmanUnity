@@ -14,9 +14,10 @@ GameObject:
   - component: {fileID: 260673310077983983}
   - component: {fileID: 3179956134010010898}
   - component: {fileID: 798926754672619978}
+  - component: {fileID: -5062043470737707583}
   m_Layer: 0
   m_Name: Pacman
-  m_TagString: Untagged
+  m_TagString: Pacman
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -77,7 +78,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -1756044057, guid: 0e8000a7fe034ad378fb0d4d4dc5aaee, type: 3}
+  m_Sprite: {fileID: 61447429, guid: 0e8000a7fe034ad378fb0d4d4dc5aaee, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -119,13 +120,13 @@ MonoBehaviour:
   curDirection: 0
   wantDirection: 0
   wallMap: {fileID: 0}
-  pointMap: {fileID: 0}
+  gateMap: {fileID: 0}
   parentGameObjectTransform: {fileID: 0}
   availDirections: 0000000000
   finalVelocity: {x: 0, y: 0}
   canMove: 1
   animationSteps: 4
-  movementCooldown: 1
+  movementCooldown: 0.1
 --- !u!1839735485 &3179956134010010898
 Tilemap:
   m_ObjectHideFlags: 0
@@ -185,3 +186,29 @@ Rigidbody2D:
   m_SleepingMode: 0
   m_CollisionDetection: 1
   m_Constraints: 4
+--- !u!61 &-5062043470737707583
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 15859370380804339}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 0.6, y: 0.8666667}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 0.8, y: 0.8666667}
+  m_EdgeRadius: 0
