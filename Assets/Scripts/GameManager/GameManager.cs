@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+
+    public enum Direction { UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3, NONE = 4, ON = 5 }
+
+
     public static readonly int powerUpTime = 10; // seconds
 
     private static object scoreLock = new object();
@@ -40,7 +44,6 @@ public class GameManager : MonoBehaviour
     {
         this.temp = GameManager.score;
         poweredUpNow = isPoweredUp();
-        this.p = poweredUp;
     }
 
     public static void resetScore()
@@ -112,5 +115,6 @@ public class GameManager : MonoBehaviour
         }
         return power > 0;
     }
+
 
 }

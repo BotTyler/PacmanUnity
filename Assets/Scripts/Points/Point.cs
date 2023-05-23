@@ -10,7 +10,7 @@ public class Point : MonoBehaviour
     {
         if (other.gameObject.tag == "Pacman")
         {
-            Debug.Log("gathered: " + other.gameObject.tag);
+            //Debug.Log("gathered: " + other.gameObject.tag);
             GameManager.addScore(1);
             Destroy(this.gameObject);
         }

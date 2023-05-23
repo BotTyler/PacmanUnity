@@ -6,11 +6,11 @@ using UnityEngine.Tilemaps;
 public class PlayerController : MonoBehaviour
 {
 
-    public enum direction { UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3, NONE = 4 };
+    //public enum direction { UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3, NONE = 4 };
     [SerializeField] private Rigidbody2D rb2d = null;
 
-    [SerializeField] private direction curDirection;
-    [SerializeField] private direction wantDirection;
+    [SerializeField] private GameManager.Direction curDirection;
+    [SerializeField] private GameManager.Direction wantDirection;
 
     [SerializeField] private Tilemap wallMap;
 
@@ -33,11 +33,15 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float movementCooldown = 1f;
 
 
+    [SerializeField] private Vector3 teleportLocation;
+    private bool isTeleporting = false;
+
+
     // Start is called before the first frame update
     void Start()
     {
 
-        this.curDirection = direction.NONE;
+        this.curDirection = GameManager.Direction.NONE;
 
     }
 
@@ -45,33 +49,40 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
 
+        if (this.isTeleporting)
+        {
+            this.curDirection = this.wantDirection;
+            //this.wantDirection = GameManager.Direction.NONE;
+            return;
+        }
+
+
         findAdjacentTiles(this.parentGameObjectTransform.position);
 
         if (Input.GetKeyDown(KeyCode.RightArrow))
         {
-            this.wantDirection = direction.RIGHT;
+            this.wantDirection = GameManager.Direction.RIGHT;
         }
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
 
-            this.wantDirection = direction.LEFT;
+            this.wantDirection = GameManager.Direction.LEFT;
         }
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
 
-            this.wantDirection = direction.UP;
+            this.wantDirection = GameManager.Direction.UP;
         }
 
         if (Input.GetKeyDown(KeyCode.DownArrow))
         {
-            this.wantDirection = direction.DOWN;
+            this.wantDirection = GameManager.Direction.DOWN;
         }
-
 
         if (this.availDirections[(int)this.wantDirection])
         {
             this.curDirection = this.wantDirection;
-            this.wantDirection = direction.NONE;
+            this.wantDirection = GameManager.Direction.NONE;
         }
 
 
@@ -86,39 +97,52 @@ public class PlayerController : MonoBehaviour
         Vector2 position = this.rb2d.position;
         if (this.canMove)
         {
-            if (this.availDirections[(int)this.curDirection])
+            if (!this.isTeleporting)
             {
-                switch (this.curDirection)
+                if (this.availDirections[(int)this.curDirection])
                 {
-                    case direction.UP:
-                        position.x = this.upLoc.x + .5f;
-                        position.y = this.upLoc.y + .5f;
-                        rotation = 90;
-                        break;
-                    case direction.RIGHT:
-                        position.x = this.rightLoc.x + .5f;
-                        position.y = this.rightLoc.y + .5f;
-                        rotation = 0;
-                        break;
-                    case direction.LEFT:
-                        position.x = this.leftLoc.x + .5f;
-                        position.y = this.leftLoc.y + .5f;
-                        rotation = 180;
-                        break;
-                    case direction.DOWN:
-                        position.x = this.downLoc.x + .5f;
-                        position.y = this.downLoc.y + .5f;
+                    switch (this.curDirection)
+                    {
+                        case GameManager.Direction.UP:
+                            position.x = this.upLoc.x + .5f;
+                            position.y = this.upLoc.y + .5f;
+                            rotation = 90;
+                            break;
+                        case GameManager.Direction.RIGHT:
+                            position.x = this.rightLoc.x + .5f;
+                            position.y = this.rightLoc.y + .5f;
+                            rotation = 0;
+                            break;
+                        case GameManager.Direction.LEFT:
+                            position.x = this.leftLoc.x + .5f;
+                            position.y = this.leftLoc.y + .5f;
+                            rotation = 180;
+                            break;
+                        case GameManager.Direction.DOWN:
+                            position.x = this.downLoc.x + .5f;
+                            position.y = this.downLoc.y + .5f;
 
-                        rotation = 270;
-                        break;
+                            rotation = 270;
+                            break;
 
+                    }
                 }
+                StartCoroutine(movementCoroutine(this.animationSteps, this.movementCooldown, this.rb2d.position, position));
+
             }
+            else
+            {
+                this.teleportLocation.x += .5f;
+                this.teleportLocation.y += .5f;
+                position = this.teleportLocation;
+                StartCoroutine(movementCoroutine(1, 0, this.rb2d.position, position));
+                this.isTeleporting = false;
+            }
+
             this.rb2d.rotation = rotation;
             //this.rb2d.position = position;
 
 
-            StartCoroutine(movementCoroutine(this.animationSteps, this.movementCooldown, this.rb2d.position, position));
         }
 
 
@@ -171,10 +195,10 @@ public class PlayerController : MonoBehaviour
 
 
         // populating the array
-        adj[(int)direction.UP] = isCurrentTileAvall(upTile) && isCurrentTileAvall(upTileGate);
-        adj[(int)direction.DOWN] = isCurrentTileAvall(downTile) && isCurrentTileAvall(downTileGate);
-        adj[(int)direction.RIGHT] = isCurrentTileAvall(rightTile) && isCurrentTileAvall(rightTileGate);
-        adj[(int)direction.LEFT] = isCurrentTileAvall(leftTile) && isCurrentTileAvall(leftTileGate);
+        adj[(int)GameManager.Direction.UP] = isCurrentTileAvall(upTile) && isCurrentTileAvall(upTileGate);
+        adj[(int)GameManager.Direction.DOWN] = isCurrentTileAvall(downTile) && isCurrentTileAvall(downTileGate);
+        adj[(int)GameManager.Direction.RIGHT] = isCurrentTileAvall(rightTile) && isCurrentTileAvall(rightTileGate);
+        adj[(int)GameManager.Direction.LEFT] = isCurrentTileAvall(leftTile) && isCurrentTileAvall(leftTileGate);
 
         //printArray(adj);
         this.availDirections = adj;
@@ -182,10 +206,10 @@ public class PlayerController : MonoBehaviour
 
     private void printArray(bool[] x)
     {
-        bool upVal = x[(int)direction.UP];
-        bool downVal = x[(int)direction.DOWN];
-        bool leftVal = x[(int)direction.LEFT];
-        bool rightVal = x[(int)direction.RIGHT];
+        bool upVal = x[(int)GameManager.Direction.UP];
+        bool downVal = x[(int)GameManager.Direction.DOWN];
+        bool leftVal = x[(int)GameManager.Direction.LEFT];
+        bool rightVal = x[(int)GameManager.Direction.RIGHT];
 
         Debug.Log("[" + upVal + ", " + downVal + ", " + leftVal + ", " + rightVal + "]");
 
@@ -194,6 +218,12 @@ public class PlayerController : MonoBehaviour
     private bool isCurrentTileAvall(Tile tile)
     {
         return tile == null;
+    }
+    public void teleport(Vector3 teleportLocation, GameManager.Direction dir)
+    {
+        this.teleportLocation = teleportLocation;
+        this.isTeleporting = true;
+        this.wantDirection = dir;
     }
 
 }

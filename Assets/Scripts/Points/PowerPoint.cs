@@ -20,7 +20,7 @@ public class PowerPoint : MonoBehaviour
     {
         if (!this.isGathered && other.gameObject.tag == "Pacman")
         {
-            Debug.Log("gathered: " + other.gameObject.tag);
+            //Debug.Log("gathered: " + other.gameObject.tag);
             this.isGathered = true;
             GameManager.addScore(10);
             StartCoroutine(powerUp());

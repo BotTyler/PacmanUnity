@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Walls
   - Pacman
+  - teleporter
   layers:
   - Default
   - TransparentFX
@@ -45,4 +46,7 @@ TagManager:
     locked: 0
   - name: Pacman
     uniqueID: 937588405
+    locked: 0
+  - name: Teleporter
+    uniqueID: 2561034847
     locked: 0
