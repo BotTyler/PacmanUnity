@@ -6,7 +6,8 @@ public class GameManager : MonoBehaviour
 {
 
     public enum Direction { UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3, NONE = 4, ON = 5 }
-
+    public enum GameState { SCATTER, CHASE, FRIGHTEN, START }
+    private static GameState CurrentGameState = GameManager.GameState.START;
 
     public static readonly int powerUpTime = 10; // seconds
 
@@ -44,6 +45,7 @@ public class GameManager : MonoBehaviour
     {
         this.temp = GameManager.score;
         poweredUpNow = isPoweredUp();
+        // put in the condiditions to handle the game states.
     }
 
     public static void resetScore()
@@ -112,8 +114,14 @@ public class GameManager : MonoBehaviour
         lock (GameManager.poweredUpLock)
         {
             power = GameManager.poweredUp;
+            GameManager.CurrentGameState = GameManager.GameState.FRIGHTEN;
         }
         return power > 0;
+    }
+
+    public static GameManager.GameState GetGameState()
+    {
+        return GameManager.CurrentGameState;
     }
 
 
