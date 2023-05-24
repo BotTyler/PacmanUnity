@@ -6,8 +6,9 @@ public class GameManager : MonoBehaviour
 {
 
     public enum Direction { UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3, NONE = 4, ON = 5 }
-    public enum GameState { SCATTER, CHASE, FRIGHTEN, START }
-    private static GameState CurrentGameState = GameManager.GameState.SCATTER;
+    public enum GameState { SCATTER, CHASE, FRIGHTEN, STARTFRIGHTEN, START, EATEN, LEAVEGATE }
+    public enum pacManEnum { RED, BLUE, PINK, TAN }
+    private static GameState[] CurrentGameState = { GameState.START, GameState.START, GameState.START, GameState.START };
 
     public static readonly int powerUpTime = 10; // seconds
 
@@ -24,6 +25,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int temp;
     [SerializeField] private bool poweredUpNow = false;
     [SerializeField] private int p;
+
 
     private void Awake()
     {
@@ -121,9 +123,23 @@ public class GameManager : MonoBehaviour
         return power > 0;
     }
 
-    public static GameManager.GameState GetGameState()
+    public static GameManager.GameState GetGameState(pacManEnum p)
     {
-        return GameManager.CurrentGameState;
+        return GameManager.CurrentGameState[(int)p];
+    }
+
+    public static void ghostEaten(GameManager.pacManEnum pe)
+    {
+        GameManager.CurrentGameState[(int)pe] = GameManager.GameState.EATEN;
+    }
+
+    public static void ghostLeftGate(GameManager.pacManEnum pe)
+    {
+        GameManager.CurrentGameState[(int)pe] = GameManager.GameState.SCATTER;
+    }
+    public static void ghostHasStartedFrighten(GameManager.pacManEnum pe)
+    {
+        GameManager.CurrentGameState[(int)pe] = GameManager.GameState.FRIGHTEN;
     }
 
 

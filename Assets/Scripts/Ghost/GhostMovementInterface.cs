@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 public abstract class GhostMovementInterface : MonoBehaviour
 {
-    private enum SPRITETYPE { NORMAL, FRIGHTEN, EATEN };
     #region sprites
     [SerializeField] private SpriteRenderer sr;
     [SerializeField] private Sprite upSprite;
@@ -21,13 +20,13 @@ public abstract class GhostMovementInterface : MonoBehaviour
 
     #endregion
 
-    [SerializeField] GameManager.GameState a;
 
     [SerializeField] internal bool canMove = true;
     [SerializeField] internal Transform lookAheadTransform;
     [SerializeField] internal Transform pacmanTransform;
     [SerializeField] internal Transform targetTransform;
     [SerializeField] internal Transform scatterTransform;
+    [SerializeField] internal Transform leaveGateTransform;
 
     [SerializeField] internal Transform deathTransform;
     [SerializeField] internal Tilemap wallsMap;
@@ -38,16 +37,46 @@ public abstract class GhostMovementInterface : MonoBehaviour
 
 
 
+
     [SerializeField] internal Vector3 teleportLocation;
     private bool isTeleporting = false;
-
     [SerializeField] internal bool hasMovedThroughGate = false;
 
-    [SerializeField] internal bool isEaten = false;
-    [SerializeField] internal bool finishedEat = false;
+    [SerializeField] internal GameManager.pacManEnum _pacmanEnum;
+    [SerializeField] internal GameManager.GameState currentState = GameManager.GameState.START;
 
 
+    internal void startFrighten()
+    {
+        Vector3Int currentLocation = this.wallsMap.WorldToCell(this.lookAheadTransform.position);
 
+
+        // FLIP
+        switch (this.curDirection)
+        {
+            case GameManager.Direction.UP:
+                this.targetTransform.position = new Vector3Int(currentLocation.x, currentLocation.y - 2, currentLocation.z);
+                this.curDirection = GameManager.Direction.DOWN;
+                break;
+            case GameManager.Direction.DOWN:
+                this.targetTransform.position = new Vector3Int(currentLocation.x, currentLocation.y + 2, currentLocation.z);
+                this.curDirection = GameManager.Direction.UP;
+
+                break;
+            case GameManager.Direction.LEFT:
+                this.targetTransform.position = new Vector3Int(currentLocation.x + 2, currentLocation.y, currentLocation.z);
+                this.curDirection = GameManager.Direction.RIGHT;
+
+                break;
+            case GameManager.Direction.RIGHT:
+                this.targetTransform.position = new Vector3Int(currentLocation.x - 2, currentLocation.y, currentLocation.z);
+                this.curDirection = GameManager.Direction.LEFT;
+
+                break;
+        }
+
+        GameManager.ghostHasStartedFrighten(this._pacmanEnum);
+    }
 
     /*
         All the methods below need to calculate where the new target location in
@@ -57,32 +86,19 @@ public abstract class GhostMovementInterface : MonoBehaviour
         System.Random rand = new System.Random(System.DateTime.Now.Millisecond);
 
 
-        // flip 180 degress
-        switch (this.curDirection)
-        {
-            case GameManager.Direction.UP:
-
-                break;
-            case GameManager.Direction.DOWN:
-
-                break;
-            case GameManager.Direction.LEFT:
-
-                break;
-            case GameManager.Direction.RIGHT:
-
-                break;
-
-        }
+        int xRandom = (rand.Next(3) - 1) * 2; // from -2 to 2
+        int yRandom = (rand.Next(3) - 1) * 2; // from -2 to 2
+        Vector3Int currentLocation = this.wallsMap.WorldToCell(this.lookAheadTransform.position);
+        this.targetTransform.position = new Vector3Int(currentLocation.x + xRandom, currentLocation.y + yRandom, currentLocation.z);
 
     }
     internal abstract void Scatter();
     internal abstract void Chase();
+
     internal void Eaten()
     {
-        this.isEaten = true;
         this.hasMovedThroughGate = false;
-        //this.targetTransform.position = this.deathTransform.position;
+
         EatenLoc();
     }
 
@@ -97,6 +113,13 @@ public abstract class GhostMovementInterface : MonoBehaviour
 
     }
 
+    internal void leaveGate()
+    {
+        this.targetTransform.position = this.leaveGateTransform.position;
+        // tell game manager that we left the gate
+        GameManager.ghostLeftGate(this._pacmanEnum);
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -107,14 +130,9 @@ public abstract class GhostMovementInterface : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        this.a = GameManager.GetGameState();
 
-        if (this.isEaten)
-        {
-            EatenLoc();
-            return;
-        }
-        switch (GameManager.GetGameState())
+        this.currentState = GameManager.GetGameState(this._pacmanEnum);
+        switch (this.currentState)
         {
 
             case GameManager.GameState.START:
@@ -124,18 +142,19 @@ public abstract class GhostMovementInterface : MonoBehaviour
                 this.Chase();
                 break;
             case GameManager.GameState.FRIGHTEN:
-                if (this.finishedEat)
-                {
-                    this.Scatter();
-                }
-                else
-                {
-                    this.Frightened();
-
-                }
+                this.Frightened();
                 break;
             case GameManager.GameState.SCATTER:
                 this.Scatter();
+                break;
+            case GameManager.GameState.EATEN:
+                this.EatenLoc();
+                break;
+            case GameManager.GameState.LEAVEGATE:
+                this.leaveGate();
+                break;
+            case GameManager.GameState.STARTFRIGHTEN:
+                this.startFrighten();
                 break;
         }
 
@@ -153,9 +172,9 @@ public abstract class GhostMovementInterface : MonoBehaviour
                 StartCoroutine(this.movementCoroutine(1, 0, this.transform.position, teleportLocation));
                 this.isTeleporting = false;
             }
-            else if (this.isEaten)
+            else if (this.currentState == GameManager.GameState.EATEN)
             {
-                Vector3Int moveLocation = this.calcMovement(this.lookAheadTransform, this.deathTransform, this.curDirection, this.wallsMap, this.gateMap);
+                Vector3Int moveLocation = this.calcMovement(this.lookAheadTransform, this.targetTransform, this.curDirection, this.wallsMap, this.gateMap);
                 Vector2 loc = new Vector2(moveLocation.x + 0.5f, moveLocation.y + 0.5f);
                 StartCoroutine(this.movementCoroutine(GameManager.totSteps, 0.01f, this.transform.position, loc));
 
@@ -168,66 +187,153 @@ public abstract class GhostMovementInterface : MonoBehaviour
                 StartCoroutine(this.movementCoroutine(GameManager.totSteps, GameManager.animationTIme, this.transform.position, loc));
 
             }
-            Sprite sp;
+
+
             switch (this.curDirection)
             {
                 // may need to add the frightened state
                 case GameManager.Direction.UP:
-
+                    determineUpSprite(this.currentState);
                     break;
                 case GameManager.Direction.DOWN:
-                    if (this.isEaten)
-                    {
-                        this.sr.sprite = this.downSpriteEaten;
-                    }
-                    else
-                    {
-                        this.sr.sprite = this.downSprite;
-                    }
+                    determineDownSprite(this.currentState);
                     break;
                 case GameManager.Direction.LEFT:
-                    if (this.isEaten)
-                    {
-                        this.sr.sprite = this.leftSpriteEaten;
-                    }
-                    else
-                    {
-                        this.sr.sprite = this.leftSprite;
-                    }
+                    determineLeftSprite(this.currentState);
                     break;
                 case GameManager.Direction.RIGHT:
-                    if (this.isEaten)
-                    {
-                        this.sr.sprite = this.rightSpriteEaten;
-                    }
-                    else
-                    {
-                        this.sr.sprite = this.rightSprite;
-                    }
+                    determineRightSprite(this.currentState);
                     break;
 
             }
-            this.sr.sprite = sp;
 
         }
 
     }
 
-    public Sprite determineUpSprite()
+    public void determineUpSprite(GameManager.GameState a)
     {
+        switch (a)
+        {
 
+            case GameManager.GameState.START:
+                this.sr.sprite = this.upSprite;
+                break;
+            case GameManager.GameState.CHASE:
+                this.sr.sprite = this.upSprite;
+                break;
+            case GameManager.GameState.FRIGHTEN:
+                this.sr.sprite = this.frightenSprite;
+                break;
+            case GameManager.GameState.SCATTER:
+                this.sr.sprite = this.upSprite;
+                break;
+            case GameManager.GameState.EATEN:
+                this.sr.sprite = this.upSpriteEaten;
+                break;
+            case GameManager.GameState.LEAVEGATE:
+                this.sr.sprite = this.upSprite;
+                break;
+            case GameManager.GameState.STARTFRIGHTEN:
+                this.sr.sprite = this.frightenSprite;
+                break;
+        }
+        // if (GameManager.GetGameState(this._pacmanEnum))
+        // {
+        //     this.sr.sprite = this.upSpriteEaten;
+        // }
+        // else if (this.localState == GameManager.GameState.FRIGHTEN)
+        // {
+        //     this.sr.sprite = this.frightenSprite;
+        // }
+        // else
+        // {
+        //     this.sr.sprite = this.upSprite;
+        // }
     }
-    public Sprite determineDownSprite()
+    public void determineDownSprite(GameManager.GameState a)
     {
+        switch (a)
+        {
 
+            case GameManager.GameState.START:
+                this.sr.sprite = this.downSprite;
+                break;
+            case GameManager.GameState.CHASE:
+                this.sr.sprite = this.downSprite;
+                break;
+            case GameManager.GameState.FRIGHTEN:
+                this.sr.sprite = this.frightenSprite;
+                break;
+            case GameManager.GameState.SCATTER:
+                this.sr.sprite = this.downSprite;
+                break;
+            case GameManager.GameState.EATEN:
+                this.sr.sprite = this.downSpriteEaten;
+                break;
+            case GameManager.GameState.LEAVEGATE:
+                this.sr.sprite = this.downSprite;
+                break;
+            case GameManager.GameState.STARTFRIGHTEN:
+                this.sr.sprite = this.frightenSprite;
+                break;
+        }
     }
-    public Sprite determineLeftSprite()
+    public void determineLeftSprite(GameManager.GameState a)
     {
+        switch (a)
+        {
 
+            case GameManager.GameState.START:
+                this.sr.sprite = this.leftSprite;
+                break;
+            case GameManager.GameState.CHASE:
+                this.sr.sprite = this.leftSprite;
+                break;
+            case GameManager.GameState.FRIGHTEN:
+                this.sr.sprite = this.frightenSprite;
+                break;
+            case GameManager.GameState.SCATTER:
+                this.sr.sprite = this.leftSprite;
+                break;
+            case GameManager.GameState.EATEN:
+                this.sr.sprite = this.leftSpriteEaten;
+                break;
+            case GameManager.GameState.LEAVEGATE:
+                this.sr.sprite = this.leftSprite;
+                break;
+            case GameManager.GameState.STARTFRIGHTEN:
+                this.sr.sprite = this.frightenSprite;
+                break;
+        }
     }
-    public Sprite determineRightSprite()
+    public void determineRightSprite(GameManager.GameState a)
     {
+        switch (a)
+        {
 
+            case GameManager.GameState.START:
+                this.sr.sprite = this.rightSprite;
+                break;
+            case GameManager.GameState.CHASE:
+                this.sr.sprite = this.rightSprite;
+                break;
+            case GameManager.GameState.FRIGHTEN:
+                this.sr.sprite = this.frightenSprite;
+                break;
+            case GameManager.GameState.SCATTER:
+                this.sr.sprite = this.rightSprite;
+                break;
+            case GameManager.GameState.EATEN:
+                this.sr.sprite = this.rightSpriteEaten;
+                break;
+            case GameManager.GameState.LEAVEGATE:
+                this.sr.sprite = this.rightSprite;
+                break;
+            case GameManager.GameState.STARTFRIGHTEN:
+                this.sr.sprite = this.frightenSprite;
+                break;
+        }
     }
     /// <summary>
     /// This method handles how the ghost are supposed to move
@@ -432,8 +538,6 @@ public abstract class GhostMovementInterface : MonoBehaviour
 
         if (other.gameObject.tag == "EatenSpawn")
         {
-            this.isEaten = false;
-            this.finishedEat = true;
             this.hasMovedThroughGate = false;
 
             // fix the sprite here
@@ -441,7 +545,7 @@ public abstract class GhostMovementInterface : MonoBehaviour
 
         if (other.gameObject.tag == "Pacman")
         {
-            if (GameManager.GetGameState() == GameManager.GameState.FRIGHTEN)
+            if (this.currentState == GameManager.GameState.FRIGHTEN)
             {
                 Eaten();
             }

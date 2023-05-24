@@ -10,7 +10,6 @@ public class PowerPoint : MonoBehaviour
     [SerializeField] private SpriteRenderer render;
 
     [SerializeField] private bool isGathered;
-
     private void Start()
     {
         this.isGathered = false;
