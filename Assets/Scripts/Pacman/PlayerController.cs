@@ -28,10 +28,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private bool canMove = true;
 
 
-    [SerializeField] private int animationSteps = 4;
-
-    [SerializeField] private float movementCooldown = 1f;
-
 
     [SerializeField] private Vector3 teleportLocation;
     private bool isTeleporting = false;
@@ -127,7 +123,7 @@ public class PlayerController : MonoBehaviour
 
                     }
                 }
-                StartCoroutine(movementCoroutine(this.animationSteps, this.movementCooldown, this.rb2d.position, position));
+                StartCoroutine(movementCoroutine(GameManager.totSteps, GameManager.animationTIme, this.rb2d.position, position));
 
             }
             else

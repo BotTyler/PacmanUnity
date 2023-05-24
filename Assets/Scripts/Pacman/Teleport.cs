@@ -49,6 +49,11 @@ public class Teleport : MonoBehaviour
         {
             other.gameObject.GetComponent<PlayerController>().teleport(this.to, this.exitDirection);
         }
+        else if (other.gameObject.tag == "Ghost")
+        {
+            other.gameObject.GetComponent<GhostMovementInterface>().teleport(this.to, this.exitDirection);
+
+        }
     }
 
 

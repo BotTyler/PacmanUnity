@@ -7,7 +7,7 @@ public class GameManager : MonoBehaviour
 
     public enum Direction { UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3, NONE = 4, ON = 5 }
     public enum GameState { SCATTER, CHASE, FRIGHTEN, START }
-    private static GameState CurrentGameState = GameManager.GameState.START;
+    private static GameState CurrentGameState = GameManager.GameState.SCATTER;
 
     public static readonly int powerUpTime = 10; // seconds
 
@@ -18,6 +18,8 @@ public class GameManager : MonoBehaviour
     private static int score;
 
     private static int poweredUp = 0;
+    public static int totSteps = 4;
+    public static float animationTIme = .1f;
 
     [SerializeField] private int temp;
     [SerializeField] private bool poweredUpNow = false;
@@ -114,7 +116,7 @@ public class GameManager : MonoBehaviour
         lock (GameManager.poweredUpLock)
         {
             power = GameManager.poweredUp;
-            GameManager.CurrentGameState = GameManager.GameState.FRIGHTEN;
+            //GameManager.CurrentGameState = GameManager.GameState.FRIGHTEN;
         }
         return power > 0;
     }

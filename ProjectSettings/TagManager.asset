@@ -7,6 +7,9 @@ TagManager:
   - Walls
   - Pacman
   - teleporter
+  - Ghost
+  - Gate
+  - EatenSpawn
   layers:
   - Default
   - TransparentFX
