@@ -99,6 +99,7 @@ public abstract class GhostMovementInterface : MonoBehaviour
     {
         this.hasMovedThroughGate = false;
 
+
         EatenLoc();
     }
 
@@ -552,6 +553,7 @@ public abstract class GhostMovementInterface : MonoBehaviour
             if (this.currentState == GameManager.GameState.FRIGHTEN)
             {
                 Eaten();
+                GameManager.ghostEaten(this._pacmanEnum);
             }
             else
             {
