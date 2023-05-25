@@ -528,7 +528,7 @@ public abstract class GhostMovementInterface : MonoBehaviour
         this.isTeleporting = true;
         this.curDirection = dir;
     }
-    private void OnCollisionEnter2D(Collision2D other)
+    private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.tag == "Gate")
         {
@@ -560,9 +560,5 @@ public abstract class GhostMovementInterface : MonoBehaviour
                 // lose life
             }
         }
-
-
-
     }
-
 }
