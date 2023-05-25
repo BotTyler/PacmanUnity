@@ -10,6 +10,7 @@ TagManager:
   - Ghost
   - Gate
   - EatenSpawn
+  - Outgate
   layers:
   - Default
   - TransparentFX

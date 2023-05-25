@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     public enum GameState { SCATTER, CHASE, FRIGHTEN, STARTFRIGHTEN, START, EATEN, LEAVEGATE }
     public enum pacManEnum { RED, BLUE, PINK, TAN }
     private static GameState[] CurrentGameState = { GameState.START, GameState.START, GameState.START, GameState.START };
+    public GameState[] gs = GameManager.CurrentGameState;
 
     public static readonly int powerUpTime = 10; // seconds
 
@@ -26,6 +27,16 @@ public class GameManager : MonoBehaviour
     [SerializeField] private bool poweredUpNow = false;
     [SerializeField] private int p;
 
+    [SerializeField] private int[] scatter;
+    [SerializeField] private int[] chase;
+
+    private static bool gameEnd = false;
+    private static bool startGameStates = false;
+    private static bool hasGameStarted = false;
+
+    [SerializeField] public bool startGames = startGameStates;
+    [SerializeField] public bool gamestart = hasGameStarted;
+
 
     private void Awake()
     {
@@ -38,18 +49,86 @@ public class GameManager : MonoBehaviour
             Destroy(this.gameObject);
         }
     }
+
+    private static void setEveryonesState(GameManager.GameState x)
+    {
+        for (int counter = 0; counter < GameManager.CurrentGameState.Length; counter++)
+        {
+            GameManager.CurrentGameState[counter] = x;
+        }
+    }
     // Start is called before the first frame update
     void Start()
     {
         score = 0;
+        GameManager.setEveryonesState(GameManager.GameState.LEAVEGATE);
 
     }
 
     private void Update()
     {
         this.temp = GameManager.score;
-        poweredUpNow = isPoweredUp();
-        // put in the condiditions to handle the game states.
+        poweredUpNow = GameManager.isPoweredUp();
+        this.gs = GameManager.CurrentGameState;
+        startGames = startGameStates;
+        gamestart = hasGameStarted;
+
+        if (GameManager.startGameStates)
+        {
+            Debug.Log("Should only see once");
+            GameManager.startGameStates = false;
+            GameManager.hasGameStarted = true;
+            StartCoroutine(gameStateCoroutine(this.scatter, this.chase));
+        }
+    }
+
+    IEnumerator gameStateCoroutine(int[] scatter, int[] chase)
+    {
+        int scatterCounter = 0, chaseCounter = 0;
+        while (scatterCounter < scatter.Length || chaseCounter < chase.Length)
+        {
+            if (scatterCounter < scatter.Length)
+            {
+                int clock = scatter[scatterCounter];
+                while (clock > 0)
+                {
+                    while (GameManager.isPoweredUp())
+                    {
+                        yield return new WaitForSeconds(1);
+                    }
+                    GameManager.setEveryonesState(GameManager.GameState.SCATTER);
+                    clock--;
+                    yield return new WaitForSeconds(1);
+                }
+                scatterCounter++;
+            }
+
+            if (chaseCounter < chase.Length)
+            {
+                int clock = chase[chaseCounter];
+                while (clock > 0)
+                {
+                    while (GameManager.isPoweredUp())
+                    {
+                        yield return new WaitForSeconds(1);
+                    }
+                    GameManager.setEveryonesState(GameManager.GameState.CHASE);
+                    clock--;
+                    yield return new WaitForSeconds(1);
+                }
+                chaseCounter++;
+            }
+
+        }
+        while (!GameManager.gameEnd)
+        {
+            while (GameManager.isPoweredUp())
+            {
+                yield return new WaitForSeconds(1);
+            }
+            GameManager.setEveryonesState(GameManager.GameState.CHASE);
+            yield return new WaitForSeconds(1);
+        }
     }
 
     public static void resetScore()
@@ -95,8 +174,10 @@ public class GameManager : MonoBehaviour
         lock (GameManager.poweredUpLock)
         {
             GameManager.poweredUp++;
-
+            // make everyone frigthtened
         }
+
+        GameManager.setEveryonesState(GameManager.GameState.STARTFRIGHTEN);
     }
 
     public static void powerDown()
@@ -136,10 +217,25 @@ public class GameManager : MonoBehaviour
     public static void ghostLeftGate(GameManager.pacManEnum pe)
     {
         GameManager.CurrentGameState[(int)pe] = GameManager.GameState.SCATTER;
+        if (!GameManager.startGameStates && !GameManager.hasGameStarted)
+        {
+            GameManager.startGameStates = true;
+        }
+
     }
     public static void ghostHasStartedFrighten(GameManager.pacManEnum pe)
     {
         GameManager.CurrentGameState[(int)pe] = GameManager.GameState.FRIGHTEN;
+    }
+
+    public static void endGame()
+    {
+
+        lock (GameManager.poweredUpLock)
+        {
+            GameManager.poweredUp = 0;
+            GameManager.gameEnd = true;
+        }
     }
 
 

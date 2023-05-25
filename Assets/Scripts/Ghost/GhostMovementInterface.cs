@@ -117,7 +117,7 @@ public abstract class GhostMovementInterface : MonoBehaviour
     {
         this.targetTransform.position = this.leaveGateTransform.position;
         // tell game manager that we left the gate
-        GameManager.ghostLeftGate(this._pacmanEnum);
+        // GameManager.ghostLeftGate(this._pacmanEnum);
     }
 
     // Start is called before the first frame update
@@ -540,7 +540,11 @@ public abstract class GhostMovementInterface : MonoBehaviour
         {
             this.hasMovedThroughGate = false;
 
-            // fix the sprite here
+        }
+        if (other.gameObject.tag == "Outgate" && this.currentState == GameManager.GameState.LEAVEGATE)
+        {
+            GameManager.ghostLeftGate(this._pacmanEnum);
+
         }
 
         if (other.gameObject.tag == "Pacman")
