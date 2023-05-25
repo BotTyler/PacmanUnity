@@ -6,7 +6,8 @@ using UnityEngine.Tilemaps;
 public class Point : MonoBehaviour
 {
 
-    private void OnTriggerEnter2D(Collision2D other)
+
+    private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.tag == "Pacman")
         {
@@ -14,8 +15,6 @@ public class Point : MonoBehaviour
             GameManager.addScore(1);
             Destroy(this.gameObject);
         }
-
-
-
     }
+
 }

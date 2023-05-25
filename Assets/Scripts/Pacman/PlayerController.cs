@@ -222,4 +222,9 @@ public class PlayerController : MonoBehaviour
         this.wantDirection = dir;
     }
 
+    public GameManager.Direction getCurrentDirection()
+    {
+        return this.curDirection;
+    }
+
 }

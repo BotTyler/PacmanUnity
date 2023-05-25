@@ -7,13 +7,7 @@ public class RedMovement : GhostMovementInterface
 {
     internal override void Chase()
     {
-        this.targetTransform.position = this.pacmanTransform.position;
+        this.targetTransform.position = this.pacmanGameObject.transform.position;
     }
-
-    internal override void Scatter()
-    {
-        this.targetTransform.position = this.scatterTransform.position;
-    }
-
 
 }

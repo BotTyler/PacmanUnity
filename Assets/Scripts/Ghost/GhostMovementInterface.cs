@@ -23,7 +23,7 @@ public abstract class GhostMovementInterface : MonoBehaviour
 
     [SerializeField] internal bool canMove = true;
     [SerializeField] internal Transform lookAheadTransform;
-    [SerializeField] internal Transform pacmanTransform;
+    [SerializeField] internal GameObject pacmanGameObject;
     [SerializeField] internal Transform targetTransform;
     [SerializeField] internal Transform scatterTransform;
     [SerializeField] internal Transform leaveGateTransform;
@@ -92,7 +92,10 @@ public abstract class GhostMovementInterface : MonoBehaviour
         this.targetTransform.position = new Vector3Int(currentLocation.x + xRandom, currentLocation.y + yRandom, currentLocation.z);
 
     }
-    internal abstract void Scatter();
+    internal void Scatter()
+    {
+        this.targetTransform.position = this.scatterTransform.position;
+    }
     internal abstract void Chase();
 
     internal void Eaten()
@@ -481,7 +484,7 @@ public abstract class GhostMovementInterface : MonoBehaviour
     /// <param name="current">current position</param>
     /// <param name="target">target position</param>
     /// <returns>float representing the distance</returns>
-    private float distance(Vector3Int current, Vector3Int target)
+    internal float distance(Vector3Int current, Vector3Int target)
     {
         float xDifference = target.x - current.x;
         float xSquare = xDifference * xDifference;
@@ -540,7 +543,11 @@ public abstract class GhostMovementInterface : MonoBehaviour
         if (other.gameObject.tag == "EatenSpawn")
         {
             this.hasMovedThroughGate = false;
+            if (this.currentState == GameManager.GameState.EATEN)
+            {
+                GameManager.ghostReturnedToBase(this._pacmanEnum);
 
+            }
         }
         if (other.gameObject.tag == "Outgate" && this.currentState == GameManager.GameState.LEAVEGATE)
         {

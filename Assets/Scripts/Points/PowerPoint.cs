@@ -15,7 +15,7 @@ public class PowerPoint : MonoBehaviour
         this.isGathered = false;
     }
 
-    private void OnTriggerEnter2D(Collision2D other)
+    private void OnTriggerEnter2D(Collider2D other)
     {
         if (!this.isGathered && other.gameObject.tag == "Pacman")
         {

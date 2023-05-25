@@ -21,7 +21,7 @@ public class GameManager : MonoBehaviour
 
     private static int poweredUp = 0;
     public static int totSteps = 4;
-    public static float animationTIme = .1f;
+    public static float animationTIme = .2f;
 
     [SerializeField] private int temp;
     [SerializeField] private bool poweredUpNow = false;
@@ -213,10 +213,14 @@ public class GameManager : MonoBehaviour
     {
         GameManager.CurrentGameState[(int)pe] = GameManager.GameState.EATEN;
     }
+    public static void ghostReturnedToBase(GameManager.pacManEnum pe)
+    {
+        GameManager.CurrentGameState[(int)pe] = GameManager.GameState.LEAVEGATE;
+    }
 
     public static void ghostLeftGate(GameManager.pacManEnum pe)
     {
-        GameManager.CurrentGameState[(int)pe] = GameManager.GameState.SCATTER;
+        GameManager.CurrentGameState[(int)pe] = GameManager.GameState.CHASE;
         if (!GameManager.startGameStates && !GameManager.hasGameStarted)
         {
             GameManager.startGameStates = true;
