@@ -21,14 +21,15 @@ public abstract class GhostMovementInterface : MonoBehaviour
     #endregion
 
 
-    [SerializeField] internal bool canMove = true;
+    [SerializeField] internal bool canMove = false;
     [SerializeField] internal Transform lookAheadTransform;
     [SerializeField] internal GameObject pacmanGameObject;
     [SerializeField] internal Transform targetTransform;
     [SerializeField] internal Transform scatterTransform;
     [SerializeField] internal Transform leaveGateTransform;
-
     [SerializeField] internal Transform deathTransform;
+    [SerializeField] internal Transform startTransform;
+
     [SerializeField] internal Tilemap wallsMap;
 
     [SerializeField] internal Tilemap gateMap;
@@ -45,7 +46,9 @@ public abstract class GhostMovementInterface : MonoBehaviour
     [SerializeField] internal GameManager.pacManEnum _pacmanEnum;
     [SerializeField] internal GameManager.GameState currentState = GameManager.GameState.START;
 
+    #region stateHandling
 
+    #region frighten
     internal void startFrighten()
     {
         Vector3Int currentLocation = this.wallsMap.WorldToCell(this.lookAheadTransform.position);
@@ -92,12 +95,16 @@ public abstract class GhostMovementInterface : MonoBehaviour
         this.targetTransform.position = new Vector3Int(currentLocation.x + xRandom, currentLocation.y + yRandom, currentLocation.z);
 
     }
+    #endregion
+
+    #region scatter
     internal void Scatter()
     {
         this.targetTransform.position = this.scatterTransform.position;
     }
-    internal abstract void Chase();
+    #endregion
 
+    #region eaten
     internal void Eaten()
     {
         this.hasMovedThroughGate = false;
@@ -110,24 +117,60 @@ public abstract class GhostMovementInterface : MonoBehaviour
     {
         this.targetTransform.position = this.deathTransform.position;
     }
+    #endregion
 
+    #region chase
+    internal abstract void Chase();
+    #endregion
+
+    #region start
     internal void StartGame()
     {
         this.targetTransform.position = this.transform.position;
-
+        this.canMove = true;
     }
+    #endregion
 
+    #region leaveGate
     internal void leaveGate()
     {
         this.targetTransform.position = this.leaveGateTransform.position;
         // tell game manager that we left the gate
         // GameManager.ghostLeftGate(this._pacmanEnum);
     }
+    #endregion
+
+    #region ready
+    internal void ready()
+    {
+        // keep the ghost in place till movement has initiated
+        this.canMove = false;
+    }
+    #endregion
+
+    #region restart
+    internal void restart()
+    {
+        // put the ghost back on their original squares
+        this.canMove = false;
+    }
+    #endregion
+
+    #endregion
+
+
+
+
+
+
+
+
+
 
     // Start is called before the first frame update
     void Start()
     {
-        this.canMove = true;
+        this.canMove = false; // make sure to set this to true when the game is ready to start
         this.hasMovedThroughGate = false;
     }
 
@@ -138,7 +181,12 @@ public abstract class GhostMovementInterface : MonoBehaviour
         this.currentState = GameManager.GetGameState(this._pacmanEnum);
         switch (this.currentState)
         {
-
+            case GameManager.GameState.READY:
+                this.ready();
+                break;
+            case GameManager.GameState.RESTART:
+                this.restart();
+                break;
             case GameManager.GameState.START:
                 this.StartGame();
                 break;
@@ -160,6 +208,24 @@ public abstract class GhostMovementInterface : MonoBehaviour
             case GameManager.GameState.STARTFRIGHTEN:
                 this.startFrighten();
                 break;
+        }
+
+        switch (this.curDirection)
+        {
+            // may need to add the frightened state
+            case GameManager.Direction.UP:
+                determineUpSprite(this.currentState);
+                break;
+            case GameManager.Direction.DOWN:
+                determineDownSprite(this.currentState);
+                break;
+            case GameManager.Direction.LEFT:
+                determineLeftSprite(this.currentState);
+                break;
+            case GameManager.Direction.RIGHT:
+                determineRightSprite(this.currentState);
+                break;
+
         }
 
 
@@ -193,33 +259,23 @@ public abstract class GhostMovementInterface : MonoBehaviour
             }
 
 
-            switch (this.curDirection)
-            {
-                // may need to add the frightened state
-                case GameManager.Direction.UP:
-                    determineUpSprite(this.currentState);
-                    break;
-                case GameManager.Direction.DOWN:
-                    determineDownSprite(this.currentState);
-                    break;
-                case GameManager.Direction.LEFT:
-                    determineLeftSprite(this.currentState);
-                    break;
-                case GameManager.Direction.RIGHT:
-                    determineRightSprite(this.currentState);
-                    break;
 
-            }
 
         }
 
     }
 
+    #region sprites
     public void determineUpSprite(GameManager.GameState a)
     {
         switch (a)
         {
-
+            case GameManager.GameState.READY:
+                this.sr.sprite = this.upSprite;
+                break;
+            case GameManager.GameState.RESTART:
+                this.sr.sprite = this.upSprite;
+                break;
             case GameManager.GameState.START:
                 this.sr.sprite = this.upSprite;
                 break;
@@ -259,7 +315,12 @@ public abstract class GhostMovementInterface : MonoBehaviour
     {
         switch (a)
         {
-
+            case GameManager.GameState.READY:
+                this.sr.sprite = this.downSprite;
+                break;
+            case GameManager.GameState.RESTART:
+                this.sr.sprite = this.downSprite;
+                break;
             case GameManager.GameState.START:
                 this.sr.sprite = this.downSprite;
                 break;
@@ -287,7 +348,12 @@ public abstract class GhostMovementInterface : MonoBehaviour
     {
         switch (a)
         {
-
+            case GameManager.GameState.READY:
+                this.sr.sprite = this.leftSprite;
+                break;
+            case GameManager.GameState.RESTART:
+                this.sr.sprite = this.leftSprite;
+                break;
             case GameManager.GameState.START:
                 this.sr.sprite = this.leftSprite;
                 break;
@@ -315,7 +381,12 @@ public abstract class GhostMovementInterface : MonoBehaviour
     {
         switch (a)
         {
-
+            case GameManager.GameState.READY:
+                this.sr.sprite = this.rightSprite;
+                break;
+            case GameManager.GameState.RESTART:
+                this.sr.sprite = this.rightSprite;
+                break;
             case GameManager.GameState.START:
                 this.sr.sprite = this.rightSprite;
                 break;
@@ -339,6 +410,10 @@ public abstract class GhostMovementInterface : MonoBehaviour
                 break;
         }
     }
+
+    #endregion
+
+    #region ghost movement
     /// <summary>
     /// This method handles how the ghost are supposed to move
     /// given a specific cell and a current direction the following rules are followed.
@@ -478,6 +553,16 @@ public abstract class GhostMovementInterface : MonoBehaviour
     }
 
 
+    public void teleport(Vector3 teleportLocation, GameManager.Direction dir)
+    {
+        this.teleportLocation = teleportLocation;
+        this.isTeleporting = true;
+        this.curDirection = dir;
+    }
+    #endregion
+
+    #region helper functions
+
     /// <summary>
     /// Calculate the distance between two points.
     /// </summary>
@@ -494,8 +579,6 @@ public abstract class GhostMovementInterface : MonoBehaviour
 
         return Mathf.Sqrt(xSquare + ySquare);
     }
-
-
 
     /// <summary>
     /// find the minimum value in the array and output the index which is the smallest.
@@ -525,12 +608,11 @@ public abstract class GhostMovementInterface : MonoBehaviour
     }
 
 
-    public void teleport(Vector3 teleportLocation, GameManager.Direction dir)
-    {
-        this.teleportLocation = teleportLocation;
-        this.isTeleporting = true;
-        this.curDirection = dir;
-    }
+
+
+    #endregion
+
+    #region collision detection
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.tag == "Gate")
@@ -564,8 +646,15 @@ public abstract class GhostMovementInterface : MonoBehaviour
             }
             else
             {
-                // lose life
+                if (this.currentState != GameManager.GameState.EATEN || this.currentState != GameManager.GameState.FRIGHTEN)
+                {
+                    // lose life
+
+                    Debug.Log("pacman dies");
+
+                }
             }
         }
     }
+    #endregion
 }

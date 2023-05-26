@@ -36,9 +36,9 @@ public class PowerPoint : MonoBehaviour
         //this.gameObject.SetActive(false);
         this.render.enabled = false;
         GameManager.powerUp();
-        Debug.Log("POWER UP");
+        //Debug.Log("POWER UP");
         yield return new WaitForSeconds(GameManager.powerUpTime);
-        Debug.Log("POWER DOWN");
+        //Debug.Log("POWER DOWN");
         GameManager.powerDown();
         Destroy(this.gameObject);
     }

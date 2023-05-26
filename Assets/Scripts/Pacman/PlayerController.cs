@@ -143,7 +143,7 @@ public class PlayerController : MonoBehaviour
 
 
     }
-
+    #region movement controls
     IEnumerator movementCoroutine(int totSteps, float animationTime, Vector2 curPosition, Vector2 toPosition)
     {
 
@@ -199,7 +199,19 @@ public class PlayerController : MonoBehaviour
         //printArray(adj);
         this.availDirections = adj;
     }
+    private bool isCurrentTileAvall(Tile tile)
+    {
+        return tile == null;
+    }
+    public void teleport(Vector3 teleportLocation, GameManager.Direction dir)
+    {
+        this.teleportLocation = teleportLocation;
+        this.isTeleporting = true;
+        this.wantDirection = dir;
+    }
+    #endregion
 
+    #region helper functions
     private void printArray(bool[] x)
     {
         bool upVal = x[(int)GameManager.Direction.UP];
@@ -211,20 +223,12 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    private bool isCurrentTileAvall(Tile tile)
-    {
-        return tile == null;
-    }
-    public void teleport(Vector3 teleportLocation, GameManager.Direction dir)
-    {
-        this.teleportLocation = teleportLocation;
-        this.isTeleporting = true;
-        this.wantDirection = dir;
-    }
+
 
     public GameManager.Direction getCurrentDirection()
     {
         return this.curDirection;
     }
+    #endregion
 
 }

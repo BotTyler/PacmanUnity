@@ -2559,6 +2559,7 @@ MonoBehaviour:
   scatterTransform: {fileID: 1197292386}
   leaveGateTransform: {fileID: 914115180}
   deathTransform: {fileID: 190724917}
+  startTransform: {fileID: 1365340414}
   wallsMap: {fileID: 1310864482}
   gateMap: {fileID: 2072458838}
   curDirection: 4
@@ -2712,6 +2713,10 @@ PrefabInstance:
       propertyPath: m_SpriteTilingProperty.oldSize.y
       value: 0.93333334
       objectReference: {fileID: 0}
+    - target: {fileID: 5763586452169584471, guid: 90d853d78689870999978827f356c852, type: 3}
+      propertyPath: m_RootOrder
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 5834919302455460037, guid: 90d853d78689870999978827f356c852, type: 3}
       propertyPath: m_Name
       value: Blue
@@ -2722,6 +2727,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 90d853d78689870999978827f356c852, type: 3}
+--- !u!4 &293061980 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5763586452169584471, guid: 90d853d78689870999978827f356c852, type: 3}
+  m_PrefabInstance: {fileID: 293061979}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &293401598 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1370087388683293399, guid: c8ca333c865af5938b0b69167c7e0a86, type: 3}
@@ -3337,6 +3347,10 @@ PrefabInstance:
       propertyPath: m_SpriteTilingProperty.oldSize.y
       value: 0.93333334
       objectReference: {fileID: 0}
+    - target: {fileID: 5763586452169584471, guid: 90d853d78689870999978827f356c852, type: 3}
+      propertyPath: m_RootOrder
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 5834919302455460037, guid: 90d853d78689870999978827f356c852, type: 3}
       propertyPath: m_Name
       value: Red
@@ -3347,6 +3361,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 90d853d78689870999978827f356c852, type: 3}
+--- !u!4 &414747371 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5763586452169584471, guid: 90d853d78689870999978827f356c852, type: 3}
+  m_PrefabInstance: {fileID: 414747370}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &416418530
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4502,6 +4521,7 @@ MonoBehaviour:
   scatterTransform: {fileID: 920003369}
   leaveGateTransform: {fileID: 914115180}
   deathTransform: {fileID: 190724917}
+  startTransform: {fileID: 414747371}
   wallsMap: {fileID: 1310864482}
   gateMap: {fileID: 2072458838}
   curDirection: 4
@@ -4754,6 +4774,10 @@ PrefabInstance:
     - target: {fileID: 3528929795790490234, guid: 5a475b20c071bea4cab4614f74dc5904, type: 3}
       propertyPath: m_Name
       value: DeathSpace
+      objectReference: {fileID: 0}
+    - target: {fileID: 4603736287063797214, guid: 5a475b20c071bea4cab4614f74dc5904, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5a475b20c071bea4cab4614f74dc5904, type: 3}
@@ -5044,6 +5068,7 @@ MonoBehaviour:
   scatterTransform: {fileID: 893667813}
   leaveGateTransform: {fileID: 914115180}
   deathTransform: {fileID: 190724917}
+  startTransform: {fileID: 293061980}
   wallsMap: {fileID: 1310864482}
   gateMap: {fileID: 2072458838}
   curDirection: 4
@@ -6961,6 +6986,7 @@ MonoBehaviour:
   scatterTransform: {fileID: 1734484856}
   leaveGateTransform: {fileID: 914115180}
   deathTransform: {fileID: 190724917}
+  startTransform: {fileID: 974746725}
   wallsMap: {fileID: 1310864482}
   gateMap: {fileID: 2072458838}
   curDirection: 4
@@ -7107,6 +7133,10 @@ PrefabInstance:
     - target: {fileID: 1734159801355931809, guid: 74e757b3618cb588a8c8404ade13bee1, type: 3}
       propertyPath: m_Name
       value: OutOfGateSpace
+      objectReference: {fileID: 0}
+    - target: {fileID: 6453060579690734560, guid: 74e757b3618cb588a8c8404ade13bee1, type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7641150603523782734, guid: 74e757b3618cb588a8c8404ade13bee1, type: 3}
       propertyPath: m_RootOrder
@@ -7464,6 +7494,10 @@ PrefabInstance:
       propertyPath: m_SpriteTilingProperty.oldSize.y
       value: 0.93333334
       objectReference: {fileID: 0}
+    - target: {fileID: 5763586452169584471, guid: 90d853d78689870999978827f356c852, type: 3}
+      propertyPath: m_RootOrder
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 5834919302455460037, guid: 90d853d78689870999978827f356c852, type: 3}
       propertyPath: m_Name
       value: Pink
@@ -7478,6 +7512,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 90d853d78689870999978827f356c852, type: 3}
+--- !u!4 &974746725 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5763586452169584471, guid: 90d853d78689870999978827f356c852, type: 3}
+  m_PrefabInstance: {fileID: 974746724}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &975580166 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6341747387902955131, guid: ddc8bf14a862bf6b0aac83c7b2ca759e, type: 3}
@@ -7878,14 +7917,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gs: 04000000040000000400000004000000
-  totPoints: 0
-  temp: 0
-  poweredUpNow: 0
-  p: 0
   scatter: 03000000030000000300000003000000030000000300000003000000
   chase: 102700000a0000000a0000000a0000000a0000000a0000000a000000
-  startGames: 0
-  gamestart: 0
 --- !u!4 &1055520533
 Transform:
   m_ObjectHideFlags: 0
@@ -14731,6 +14764,10 @@ PrefabInstance:
       propertyPath: m_SpriteTilingProperty.oldSize.y
       value: 0.93333334
       objectReference: {fileID: 0}
+    - target: {fileID: 5763586452169584471, guid: 90d853d78689870999978827f356c852, type: 3}
+      propertyPath: m_RootOrder
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 5834919302455460037, guid: 90d853d78689870999978827f356c852, type: 3}
       propertyPath: m_Name
       value: Tan
@@ -14741,6 +14778,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 90d853d78689870999978827f356c852, type: 3}
+--- !u!4 &1365340414 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5763586452169584471, guid: 90d853d78689870999978827f356c852, type: 3}
+  m_PrefabInstance: {fileID: 1365340413}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1365440935 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1370087388683293399, guid: c8ca333c865af5938b0b69167c7e0a86, type: 3}

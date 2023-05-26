@@ -4,90 +4,61 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-
+    #region gameEnums
     public enum Direction { UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3, NONE = 4, ON = 5 }
-    public enum GameState { SCATTER, CHASE, FRIGHTEN, STARTFRIGHTEN, START, EATEN, LEAVEGATE }
+    public enum GameState { SCATTER, CHASE, FRIGHTEN, STARTFRIGHTEN, START, EATEN, LEAVEGATE, RESTART, READY }
     public enum pacManEnum { RED, BLUE, PINK, TAN }
-    private static GameState[] CurrentGameState = { GameState.START, GameState.START, GameState.START, GameState.START };
+    #endregion
+
+    #region pacman Lives
+    private static object livesLock = new object();
+    private static int livesLeft = 3;
+
+    public static void addLife()
+    {
+        lock (GameManager.livesLock)
+        {
+            GameManager.livesLeft += 1;
+        }
+    }
+
+    public static void subtractLives()
+    {
+        lock (GameManager.livesLock)
+        {
+            GameManager.livesLeft += 1;
+        }
+    }
+
+    public static int getLives()
+    {
+        int num = 0;
+        lock (GameManager.livesLock)
+        {
+            num = GameManager.livesLeft;
+        }
+        return num;
+    }
+    #endregion
+
+    #region gameStates
+    private static GameState[] CurrentGameState = { GameState.READY, GameState.READY, GameState.READY, GameState.READY };
     public GameState[] gs = GameManager.CurrentGameState;
 
-    public static readonly int powerUpTime = 10; // seconds
-
-    private static object scoreLock = new object();
-    private static object poweredUpLock = new object();
-    private static object totalNumberOfPointsLock = new object();
-    public static GameManager instance;
-
-    private static int score = 0;
-    private static int totalNumberOfPoints = 0;
-    [SerializeField] public int totPoints;
-
-
-    private static int poweredUp = 0;
-    public static int totSteps = 4;
-    public static float animationTIme = .2f;
-
-    [SerializeField] private int temp;
-    [SerializeField] private bool poweredUpNow = false;
-    [SerializeField] private int p;
 
     [SerializeField] private int[] scatter;
     [SerializeField] private int[] chase;
 
-    private static bool gameEnd = false;
-    private static bool startGameStates = false;
-    private static bool hasGameStarted = false;
-
-    [SerializeField] public bool startGames = startGameStates;
-    [SerializeField] public bool gamestart = hasGameStarted;
-
-
-    private void Awake()
-    {
-        if (instance == null)
-        {
-            instance = this;
-        }
-        else
-        {
-            Destroy(this.gameObject);
-        }
-    }
 
     private static void setEveryonesState(GameManager.GameState x)
     {
         for (int counter = 0; counter < GameManager.CurrentGameState.Length; counter++)
         {
-            if (GameManager.GameState.EATEN == x)
+            if (GameManager.GameState.EATEN == GameManager.CurrentGameState[counter])
             {
                 continue;
             }
             GameManager.CurrentGameState[counter] = x;
-        }
-    }
-    // Start is called before the first frame update
-    void Start()
-    {
-        score = 0;
-        GameManager.setEveryonesState(GameManager.GameState.LEAVEGATE);
-
-    }
-
-    private void Update()
-    {
-        this.temp = GameManager.score;
-        poweredUpNow = GameManager.isPoweredUp();
-        this.gs = GameManager.CurrentGameState;
-        startGames = startGameStates;
-        gamestart = hasGameStarted;
-        this.totPoints = GameManager.getPointsLeft();
-
-        if (GameManager.startGameStates)
-        {
-            Debug.Log("Should only see once");
-            GameManager.startGameStates = false;
-            GameManager.hasGameStarted = true;
-            StartCoroutine(gameStateCoroutine(this.scatter, this.chase));
         }
     }
 
@@ -140,6 +111,16 @@ public class GameManager : MonoBehaviour
         }
     }
 
+
+
+    #endregion
+
+    #region Score
+    private static object scoreLock = new object();
+
+    private static int score = 0;
+
+
     public static void resetScore()
     {
         lock (GameManager.scoreLock)
@@ -173,6 +154,21 @@ public class GameManager : MonoBehaviour
 
         }
     }
+
+
+    #endregion
+
+    #region Points
+
+    public static readonly int powerUpTime = 10; // seconds
+
+    private static object poweredUpLock = new object();
+    private static object totalNumberOfPointsLock = new object();
+
+    private static int totalNumberOfPoints = 0;
+
+    private static int poweredUp = 0;
+
 
     /// <summary>
     /// Method that adds one to the power up variable.
@@ -213,43 +209,6 @@ public class GameManager : MonoBehaviour
         return power > 0;
     }
 
-    public static GameManager.GameState GetGameState(pacManEnum p)
-    {
-        return GameManager.CurrentGameState[(int)p];
-    }
-
-    public static void ghostEaten(GameManager.pacManEnum pe)
-    {
-        GameManager.CurrentGameState[(int)pe] = GameManager.GameState.EATEN;
-    }
-    public static void ghostReturnedToBase(GameManager.pacManEnum pe)
-    {
-        GameManager.CurrentGameState[(int)pe] = GameManager.GameState.LEAVEGATE;
-    }
-
-    public static void ghostLeftGate(GameManager.pacManEnum pe)
-    {
-        GameManager.CurrentGameState[(int)pe] = GameManager.GameState.CHASE;
-        if (!GameManager.startGameStates && !GameManager.hasGameStarted)
-        {
-            GameManager.startGameStates = true;
-        }
-
-    }
-    public static void ghostHasStartedFrighten(GameManager.pacManEnum pe)
-    {
-        GameManager.CurrentGameState[(int)pe] = GameManager.GameState.FRIGHTEN;
-    }
-
-    public static void endGame()
-    {
-
-        lock (GameManager.poweredUpLock)
-        {
-            GameManager.poweredUp = 0;
-            GameManager.gameEnd = true;
-        }
-    }
 
     public static void registerPoint()
     {
@@ -278,6 +237,150 @@ public class GameManager : MonoBehaviour
         }
         return num;
     }
+
+
+
+    #endregion
+
+    #region Animation Variables
+
+    public static int totSteps = 4;
+    public static float animationTIme = .2f;
+    #endregion
+
+    #region start of game
+
+    private static bool startGameStates = false;
+    private static bool hasGameStarted = false;
+
+    #endregion
+
+    #region end of game
+    private static bool gameEnd = false;
+
+    public bool isGameOver()
+    {
+        return GameManager.getPointsLeft() <= 0;
+    }
+
+    private void GameOver()
+    {
+        // game over stuff goes in here
+        lock (GameManager.poweredUpLock)
+        {
+            GameManager.poweredUp = 0;
+            GameManager.gameEnd = true;
+        }
+        // pause the game
+        Time.timeScale = 0;
+        // Determine if a win or loss
+        if (GameManager.livesLeft > 0)
+        {
+            //win
+            win();
+        }
+        else
+        {
+            //loss
+            loss();
+        }
+    }
+
+    private void win()
+    {
+        // display the win icon
+    }
+
+    private void loss()
+    {
+        // display game over icon
+    }
+
+    #endregion
+
+    #region Ghost Eaten
+
+    public static GameManager.GameState GetGameState(pacManEnum p)
+    {
+        return GameManager.CurrentGameState[(int)p];
+    }
+
+    public static void ghostEaten(GameManager.pacManEnum pe)
+    {
+        GameManager.CurrentGameState[(int)pe] = GameManager.GameState.EATEN;
+    }
+    public static void ghostReturnedToBase(GameManager.pacManEnum pe)
+    {
+        GameManager.CurrentGameState[(int)pe] = GameManager.GameState.LEAVEGATE;
+    }
+
+    public static void ghostLeftGate(GameManager.pacManEnum pe)
+    {
+        GameManager.CurrentGameState[(int)pe] = GameManager.GameState.CHASE;
+        if (!GameManager.startGameStates && !GameManager.hasGameStarted)
+        {
+            GameManager.startGameStates = true;
+        }
+
+    }
+    public static void ghostHasStartedFrighten(GameManager.pacManEnum pe)
+    {
+        GameManager.CurrentGameState[(int)pe] = GameManager.GameState.FRIGHTEN;
+    }
+
+
+    #endregion
+
+    public static GameManager instance;
+
+
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(this.gameObject);
+        }
+    }
+
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        score = 0;
+        GameManager.setEveryonesState(GameManager.GameState.LEAVEGATE);
+
+    }
+
+    private void Update()
+    {
+        this.gs = GameManager.CurrentGameState;
+        if (this.isGameOver())
+        {
+            // GAME OVER (Win)
+            this.GameOver();
+        }
+
+
+
+        if (GameManager.startGameStates)
+        {
+            Debug.Log("Should only see once");
+            GameManager.startGameStates = false;
+            GameManager.hasGameStarted = true;
+            StartCoroutine(gameStateCoroutine(this.scatter, this.chase));
+        }
+    }
+
+
+
+
+
+
+
 
 
 }
