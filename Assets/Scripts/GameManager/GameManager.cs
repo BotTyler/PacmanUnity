@@ -15,9 +15,13 @@ public class GameManager : MonoBehaviour
 
     private static object scoreLock = new object();
     private static object poweredUpLock = new object();
+    private static object totalNumberOfPointsLock = new object();
     public static GameManager instance;
 
-    private static int score;
+    private static int score = 0;
+    private static int totalNumberOfPoints = 0;
+    [SerializeField] public int totPoints;
+
 
     private static int poweredUp = 0;
     public static int totSteps = 4;
@@ -54,6 +58,10 @@ public class GameManager : MonoBehaviour
     {
         for (int counter = 0; counter < GameManager.CurrentGameState.Length; counter++)
         {
+            if (GameManager.GameState.EATEN == x)
+            {
+                continue;
+            }
             GameManager.CurrentGameState[counter] = x;
         }
     }
@@ -72,6 +80,7 @@ public class GameManager : MonoBehaviour
         this.gs = GameManager.CurrentGameState;
         startGames = startGameStates;
         gamestart = hasGameStarted;
+        this.totPoints = GameManager.getPointsLeft();
 
         if (GameManager.startGameStates)
         {
@@ -240,6 +249,34 @@ public class GameManager : MonoBehaviour
             GameManager.poweredUp = 0;
             GameManager.gameEnd = true;
         }
+    }
+
+    public static void registerPoint()
+    {
+        lock (GameManager.totalNumberOfPointsLock)
+        {
+            GameManager.totalNumberOfPoints += 1;
+
+        }
+    }
+
+    public static void subtractPoint()
+    {
+        lock (totalNumberOfPointsLock)
+        {
+            GameManager.totalNumberOfPoints -= 1;
+
+        }
+    }
+
+    public static int getPointsLeft()
+    {
+        int num = 0;
+        lock (GameManager.totalNumberOfPointsLock)
+        {
+            num = GameManager.totalNumberOfPoints;
+        }
+        return num;
     }
 
 

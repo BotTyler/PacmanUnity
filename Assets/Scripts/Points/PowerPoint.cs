@@ -13,6 +13,7 @@ public class PowerPoint : MonoBehaviour
     private void Start()
     {
         this.isGathered = false;
+        GameManager.registerPoint();
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -21,6 +22,7 @@ public class PowerPoint : MonoBehaviour
         {
             //Debug.Log("gathered: " + other.gameObject.tag);
             this.isGathered = true;
+            GameManager.subtractPoint();
             GameManager.addScore(10);
             StartCoroutine(powerUp());
 

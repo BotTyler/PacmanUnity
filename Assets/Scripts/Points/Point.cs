@@ -13,8 +13,13 @@ public class Point : MonoBehaviour
         {
             //Debug.Log("gathered: " + other.gameObject.tag);
             GameManager.addScore(1);
+            GameManager.subtractPoint();
             Destroy(this.gameObject);
         }
+    }
+    private void Start()
+    {
+        GameManager.registerPoint();
     }
 
 }
