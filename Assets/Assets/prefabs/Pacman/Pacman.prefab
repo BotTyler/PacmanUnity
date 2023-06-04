@@ -11,10 +11,10 @@ GameObject:
   - component: {fileID: 5645038790386309561}
   - component: {fileID: 5097293914653548982}
   - component: {fileID: 9072507280502777693}
-  - component: {fileID: 260673310077983983}
   - component: {fileID: 3179956134010010898}
   - component: {fileID: 798926754672619978}
   - component: {fileID: -5062043470737707583}
+  - component: {fileID: 260673310077983983}
   m_Layer: 0
   m_Name: Pacman
   m_TagString: Pacman
@@ -104,29 +104,6 @@ MonoBehaviour:
   _data:
     _json: '{"declarations":{"Kind":"Object","collection":{"$content":[],"$version":"A"},"$version":"A"}}'
     _objectReferences: []
---- !u!114 &260673310077983983
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 15859370380804339}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0cad768d19df70830abafd31b5b2a8a4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rb2d: {fileID: 798926754672619978}
-  curDirection: 0
-  wantDirection: 0
-  wallMap: {fileID: 0}
-  gateMap: {fileID: 0}
-  parentGameObjectTransform: {fileID: 0}
-  availDirections: 0000000000
-  finalVelocity: {x: 0, y: 0}
-  canMove: 1
-  animationSteps: 4
-  movementCooldown: 0.1
 --- !u!1839735485 &3179956134010010898
 Tilemap:
   m_ObjectHideFlags: 0
@@ -212,3 +189,26 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.8, y: 0.8666667}
   m_EdgeRadius: 0
+--- !u!114 &260673310077983983
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 15859370380804339}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cad768d19df70830abafd31b5b2a8a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rb2d: {fileID: 798926754672619978}
+  curDirection: 0
+  wantDirection: 0
+  wallMap: {fileID: 0}
+  gateMap: {fileID: 0}
+  parentGameObjectTransform: {fileID: 0}
+  availDirections: 0000000000
+  finalVelocity: {x: 0, y: 0}
+  canMove: 1
+  teleportLocation: {x: 0, y: 0, z: 0}
+  animator: {fileID: 0}

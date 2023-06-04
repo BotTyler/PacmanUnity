@@ -10,9 +10,20 @@ public class GameManager : MonoBehaviour
     public enum pacManEnum { RED, BLUE, PINK, TAN }
     #endregion
 
+
+
+
+
+
+
+
+
     #region pacman Lives
     private static object livesLock = new object();
     private static int livesLeft = 3;
+
+    [SerializeField] private SpriteRenderer winRenderer;
+    [SerializeField] private SpriteRenderer gameOverRenderer;
 
     public static void addLife()
     {
@@ -26,7 +37,7 @@ public class GameManager : MonoBehaviour
     {
         lock (GameManager.livesLock)
         {
-            GameManager.livesLeft += 1;
+            GameManager.livesLeft -= 1;
         }
     }
 
@@ -39,6 +50,7 @@ public class GameManager : MonoBehaviour
         }
         return num;
     }
+
     #endregion
 
     #region gameStates
@@ -64,6 +76,13 @@ public class GameManager : MonoBehaviour
 
     IEnumerator gameStateCoroutine(int[] scatter, int[] chase)
     {
+
+        while (!GameManager.hasGameStarted)
+        {
+            yield return new WaitForSeconds(.1f);
+        }
+        GameManager.setEveryonesState(GameManager.GameState.LEAVEGATE);
+        yield return new WaitForSeconds(.75f);
         int scatterCounter = 0, chaseCounter = 0;
         while (scatterCounter < scatter.Length || chaseCounter < chase.Length)
         {
@@ -250,8 +269,17 @@ public class GameManager : MonoBehaviour
 
     #region start of game
 
-    private static bool startGameStates = false;
+    //private static bool startGameStates = false;
     private static bool hasGameStarted = false;
+    public static void pacmanHasMoved()
+    {
+        if (!GameManager.hasGameStarted)
+        {
+            GameManager.hasGameStarted = true;
+            GameManager.setEveryonesState(GameManager.GameState.START);
+        }
+
+    }
 
     #endregion
 
@@ -260,7 +288,11 @@ public class GameManager : MonoBehaviour
 
     public bool isGameOver()
     {
-        return GameManager.getPointsLeft() <= 0;
+        return GameManager.getPointsLeft() <= 0 || GameManager.getLives() <= 0;
+    }
+    public bool didWin()
+    {
+        return GameManager.getLives() > 0 && GameManager.getPointsLeft() <= 0;
     }
 
     private void GameOver()
@@ -272,28 +304,33 @@ public class GameManager : MonoBehaviour
             GameManager.gameEnd = true;
         }
         // pause the game
-        Time.timeScale = 0;
         // Determine if a win or loss
-        if (GameManager.livesLeft > 0)
+        if (this.didWin())
         {
             //win
-            win();
+            this.win();
         }
         else
         {
             //loss
-            loss();
+            this.loss();
         }
+
+        Time.timeScale = 0;
     }
 
     private void win()
     {
         // display the win icon
+        this.gameOverRenderer.enabled = false;
+        this.winRenderer.enabled = true;
     }
 
     private void loss()
     {
         // display game over icon
+        this.winRenderer.enabled = false;
+        this.gameOverRenderer.enabled = true;
     }
 
     #endregion
@@ -317,10 +354,10 @@ public class GameManager : MonoBehaviour
     public static void ghostLeftGate(GameManager.pacManEnum pe)
     {
         GameManager.CurrentGameState[(int)pe] = GameManager.GameState.CHASE;
-        if (!GameManager.startGameStates && !GameManager.hasGameStarted)
-        {
-            GameManager.startGameStates = true;
-        }
+        // if (!GameManager.startGameStates && !GameManager.hasGameStarted)
+        // {
+        //     GameManager.startGameStates = true;
+        // }
 
     }
     public static void ghostHasStartedFrighten(GameManager.pacManEnum pe)
@@ -351,7 +388,10 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         score = 0;
-        GameManager.setEveryonesState(GameManager.GameState.LEAVEGATE);
+        GameManager.setEveryonesState(GameManager.GameState.READY);
+        this.gameOverRenderer.enabled = true; // set to false
+        this.winRenderer.enabled = true; // set to false
+        StartCoroutine(gameStateCoroutine(this.scatter, this.chase));
 
     }
 
@@ -366,13 +406,26 @@ public class GameManager : MonoBehaviour
 
 
 
-        if (GameManager.startGameStates)
-        {
-            Debug.Log("Should only see once");
-            GameManager.startGameStates = false;
-            GameManager.hasGameStarted = true;
-            StartCoroutine(gameStateCoroutine(this.scatter, this.chase));
-        }
+        // if (GameManager.startGameStates)
+        // {
+        //     Debug.Log("Should only see once");
+        //     GameManager.startGameStates = false;
+        //     GameManager.hasGameStarted = true;
+        //     StartCoroutine(gameStateCoroutine(this.scatter, this.chase));
+        // }
+    }
+
+    public static void restart()
+    {
+        GameManager.setEveryonesState(GameManager.GameState.RESTART);
+        // stop the coroutine
+
+
+    }
+
+    public static void registerReadyRestart(pacManEnum p)
+    {
+        GameManager.CurrentGameState[(int)p] = GameManager.GameState.READY;
     }
 
 

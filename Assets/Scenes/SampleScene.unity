@@ -6568,6 +6568,16 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 8396594761663597952, guid: 324c07cf4f052083fb01b019a6f88508, type: 3}
   m_PrefabInstance: {fileID: 1108009554}
   m_PrefabAsset: {fileID: 0}
+--- !u!212 &835991725 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 3603956942920936645, guid: 324c07cf4f052083fb01b019a6f88508, type: 3}
+  m_PrefabInstance: {fileID: 1108009554}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &835991727 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 8412418929173180253, guid: 324c07cf4f052083fb01b019a6f88508, type: 3}
+  m_PrefabInstance: {fileID: 1108009554}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &849215838
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7916,9 +7926,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c55b224121fb55f61aeb4b9620c2ec4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  winRenderer: {fileID: 835991725}
+  gameOverRenderer: {fileID: 835991725}
   gs: 04000000040000000400000004000000
-  scatter: 03000000030000000300000003000000030000000300000003000000
-  chase: 102700000a0000000a0000000a0000000a0000000a0000000a000000
+  scatter: 05000000050000000500000005000000050000000500000005000000
+  chase: 0a0000000a0000000a0000000a0000000a0000000a0000000a000000
 --- !u!4 &1055520533
 Transform:
   m_ObjectHideFlags: 0
@@ -8196,6 +8208,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3603956942920936645, guid: 324c07cf4f052083fb01b019a6f88508, type: 3}
+      propertyPath: m_Size.y
+      value: 0.8666667
+      objectReference: {fileID: 0}
+    - target: {fileID: 3603956942920936645, guid: 324c07cf4f052083fb01b019a6f88508, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -1756044057, guid: 0e8000a7fe034ad378fb0d4d4dc5aaee, type: 3}
+    - target: {fileID: 3603956942920936645, guid: 324c07cf4f052083fb01b019a6f88508, type: 3}
+      propertyPath: m_WasSpriteAssigned
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4245168965740090570, guid: 324c07cf4f052083fb01b019a6f88508, type: 3}
       propertyPath: m_LocalScale.z
       value: 1
@@ -8212,6 +8236,10 @@ PrefabInstance:
       propertyPath: m_WasSpriteAssigned
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8412418929173180253, guid: 324c07cf4f052083fb01b019a6f88508, type: 3}
+      propertyPath: m_UpdateMode
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 8584127586360758684, guid: 324c07cf4f052083fb01b019a6f88508, type: 3}
       propertyPath: gateMap
       value: 
@@ -8220,6 +8248,10 @@ PrefabInstance:
       propertyPath: wallMap
       value: 
       objectReference: {fileID: 1310864482}
+    - target: {fileID: 8584127586360758684, guid: 324c07cf4f052083fb01b019a6f88508, type: 3}
+      propertyPath: animator
+      value: 
+      objectReference: {fileID: 835991727}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 324c07cf4f052083fb01b019a6f88508, type: 3}
 --- !u!4 &1111143875 stripped
@@ -20730,7 +20762,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2074443568
 Transform:
   m_ObjectHideFlags: 0

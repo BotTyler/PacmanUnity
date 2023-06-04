@@ -11,7 +11,7 @@ public class PinkMovement : GhostMovementInterface
         int vertSpacing = 0;
         int horizontalSpacing = 0;
 
-        int spacingVlaue = 4;
+        int spacingVlaue = 2;
         switch (pacmanCurrentDirection)
         {
             case GameManager.Direction.UP:

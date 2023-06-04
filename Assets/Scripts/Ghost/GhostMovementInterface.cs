@@ -124,10 +124,17 @@ public abstract class GhostMovementInterface : MonoBehaviour
     #endregion
 
     #region start
+
+    private bool started = false;
     internal void StartGame()
     {
-        this.targetTransform.position = this.transform.position;
-        this.canMove = true;
+        //this.targetTransform.position = this.transform.position;
+        if (!started)
+        {
+            this.canMove = true;
+            this.started = true; // prevent the lookahead from going tooooo far
+
+        }
     }
     #endregion
 
@@ -152,7 +159,12 @@ public abstract class GhostMovementInterface : MonoBehaviour
     internal void restart()
     {
         // put the ghost back on their original squares
-        this.canMove = false;
+        this.sr.enabled = false;
+        this.transform.position = this.startTransform.position;
+        this.sr.enabled = true;
+        GameManager.registerReadyRestart(this._pacmanEnum);
+        StopAllCoroutines();
+        Start();
     }
     #endregion
 
@@ -170,6 +182,7 @@ public abstract class GhostMovementInterface : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        this.started = false;
         this.canMove = false; // make sure to set this to true when the game is ready to start
         this.hasMovedThroughGate = false;
     }
@@ -651,7 +664,7 @@ public abstract class GhostMovementInterface : MonoBehaviour
                     // lose life
 
                     Debug.Log("pacman dies");
-
+                    other.gameObject.GetComponent<PlayerController>().pacmanDead();
                 }
             }
         }

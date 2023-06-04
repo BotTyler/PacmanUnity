@@ -7,7 +7,7 @@ public class PlayerController : MonoBehaviour
 {
 
     //public enum direction { UP = 0, DOWN = 1, LEFT = 2, RIGHT = 3, NONE = 4 };
-    [SerializeField] private Rigidbody2D rb2d = null;
+    [SerializeField] private Rigidbody2D rb2d;
 
     [SerializeField] private GameManager.Direction curDirection;
     [SerializeField] private GameManager.Direction wantDirection;
@@ -18,19 +18,20 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private Transform parentGameObjectTransform;
     //public Vector3 location;
-    [SerializeField] private bool[] availDirections = { false, false, false, false, false };
-    [SerializeField] private Vector2 finalVelocity = new Vector2(0, 0);
+    [SerializeField] private bool[] availDirections = new bool[] { false, false, false, false, false };
 
     private Vector3Int upLoc;
     private Vector3Int downLoc;
     private Vector3Int rightLoc;
     private Vector3Int leftLoc;
+    private SpriteRenderer sr;
     [SerializeField] private bool canMove = true;
 
 
 
     [SerializeField] private Vector3 teleportLocation;
     private bool isTeleporting = false;
+    [SerializeField] private Transform startSquare;
 
 
     // Start is called before the first frame update
@@ -38,6 +39,10 @@ public class PlayerController : MonoBehaviour
     {
 
         this.curDirection = GameManager.Direction.NONE;
+        this.wantDirection = GameManager.Direction.NONE;
+        this.canMove = true;
+        this.availDirections = new bool[] { false, false, false, false, false };
+        this.sr = this.GetComponent<SpriteRenderer>();
 
     }
 
@@ -77,6 +82,7 @@ public class PlayerController : MonoBehaviour
 
         if (this.availDirections[(int)this.wantDirection])
         {
+            GameManager.pacmanHasMoved();
             this.curDirection = this.wantDirection;
             this.wantDirection = GameManager.Direction.NONE;
         }
@@ -88,7 +94,6 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-
         float rotation = this.rb2d.rotation;
         Vector2 position = this.rb2d.position;
         if (this.canMove)
@@ -143,6 +148,8 @@ public class PlayerController : MonoBehaviour
 
 
     }
+
+
     #region movement controls
     IEnumerator movementCoroutine(int totSteps, float animationTime, Vector2 curPosition, Vector2 toPosition)
     {
@@ -228,6 +235,40 @@ public class PlayerController : MonoBehaviour
     public GameManager.Direction getCurrentDirection()
     {
         return this.curDirection;
+    }
+    #endregion
+
+
+    #region pacman Death Animations
+    [SerializeField] private Animator animator;
+
+
+    public void pacmanDead()
+    {
+
+        animator.SetTrigger("pacmanDie");
+
+    }
+
+    private void startDeathAnimation()
+    {
+        Time.timeScale = 0;
+        StopAllCoroutines();
+        this.Start();
+        GameManager.restart();
+        print("START");
+    }
+
+    private void endDeathAnimation()
+    {
+        Time.timeScale = 1;
+        // call the game manager reset function
+        this.sr.enabled = false;
+        this.transform.position = this.startSquare.position;
+        this.sr.enabled = true;
+        Start();
+
+        print("END");
     }
     #endregion
 
